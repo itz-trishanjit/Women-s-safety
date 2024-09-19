@@ -139,14 +139,8 @@
             <label for="movement-threshold">Movement Threshold:</label>
             <input type="number" id="movement-threshold" min="1" max="100" value="35">
             <p id="threshold-value">35</p>
-            <label for="alert-method">Alert Method:</label>
-            <select id="alert-method">
-                <option value="sms">SMS</option>
-                <option value="email">Email</option>
-            </select>
             <label for="emergency-message">Emergency Message:</label>
             <textarea id="emergency-message" rows="4" placeholder="Enter your emergency message..."></textarea>
-            <button id="test-alert">Test Alert</button>
         </section>
     </main>
 
@@ -205,70 +199,10 @@
             if (totalAcceleration > sensitivity) {
                 abnormalMovementCount++;
                 if (abnormalMovementCount >= threshold) {
-                    sendAlert();
+                    alert('Abnormal movement detected!');
                     abnormalMovementCount = 0;
                 }
             }
-        }
-
-        function sendAlert() {
-            const message = document.getElementById('emergency-message').value || 'Emergency detected!';
-            const alertMethod = document.getElementById('alert-method').value;
-            
-            if (alertMethod === 'sms') {
-                sendSMS(message);
-            } else {
-                sendEmail(message);
-            }
-            getLocation(); // Attach location to the alert
-        }
-
-        function sendEmail(message) {
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-            xhr.addEventListener('readystatechange', function() {
-                if (this.readyState === this.DONE) {
-                    console.log(this.responseText);
-                }
-            });
-            xhr.open('GET', 'https://rapidprod-sendgrid-v1.p.rapidapi.com/suppression/blocks/%7Bemail%7D');
-            xhr.setRequestHeader('x-rapidapi-key', '7abe1243bemsh5c95c11e0c30a82p18fbf5jsna7097f193b35');
-            xhr.setRequestHeader('x-rapidapi-host', 'rapidprod-sendgrid-v1.p.rapidapi.com');
-            xhr.send(null);
-            addLogEntry('Email alert sent: ' + message);
-        }
-
-        function sendSMS(message) {
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-            xhr.addEventListener('readystatechange', function() {
-                if (this.readyState === this.DONE) {
-                    console.log(this.responseText);
-                }
-            });
-            xhr.open('GET', 'https://twilio99.p.rapidapi.com/');
-            xhr.setRequestHeader('x-rapidapi-key', '7abe1243bemsh5c95c11e0c30a82p18fbf5jsna709b5f193b35');
-            xhr.setRequestHeader('x-rapidapi-host', 'twilio99.p.rapidapi.com');
-            xhr.send(null);
-            addLogEntry('SMS alert sent: ' + message);
-        }
-
-        function getLocation() {
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-            xhr.addEventListener('readystatechange', function() {
-                if (this.readyState === this.DONE) {
-                    const response = JSON.parse(this.responseText);
-                    const location = response.data[0]; // Assuming the first result is the most relevant
-                    const locationMessage = `Location: ${location.name}, Latitude: ${location.latitude}, Longitude: ${location.longitude}`;
-                    addLogEntry(locationMessage);
-                    console.log(locationMessage);
-                }
-            });
-            xhr.open('GET', 'https://positionstack.p.rapidapi.com/v1/forward?access_key=your_access_key&query=your_query');
-            xhr.setRequestHeader('x-rapidapi-key', '7abe1243bemsh5c95c11e0c30a82p18fbf5jsna7097f193b35');
-            xhr.setRequestHeader('x-rapidapi-host', 'positionstack.p.rapidapi.com');
-            xhr.send(null);
         }
 
         function startRecording() {
@@ -333,11 +267,6 @@
             } else {
                 alert('Please enter both contact name and number.');
             }
-        });
-
-        // Test alert functionality
-        document.getElementById('test-alert').addEventListener('click', () => {
-            sendAlert();
         });
     </script>
 </body>
